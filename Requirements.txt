@@ -1,0 +1,8 @@
+requests
+time
+datetime
+pandas_datareader
+yfinance 
+json 
+urllib
+sqlite3

@@ -126,7 +126,7 @@ def decide(updates):
             print(text[1:])
             chat = update["message"]["chat"]["id"]
             items = db.get_items(chat)
-            if text[0] == '/delete_watchlist':
+            if text[0] == '/delete_watchlist' or text[0] == '/delete_watchlist@Liga_Aktien_bot':
                 if len(text[1:]) == 0:
                     keyboard = build_keyboard(items)
                     send_message("Select an item to delete", chat, keyboard)
@@ -137,7 +137,7 @@ def decide(updates):
                         items = db.get_items(chat)
                         message = "\n".join(items)
                         send_message(message, chat)
-            elif text[0] == '/add_watchlist':
+            elif text[0] == '/add_watchlist'or text[0] == '/add_watchlist@Liga_Aktien_bot':
                 for text in text[1:]:
                     text = text.replace(',','')
                     if text in items:
@@ -147,11 +147,11 @@ def decide(updates):
                         items = db.get_items(chat)
                         message = "\n".join(items)
                     send_message(message, chat)
-            elif text[0] == '/get_watchlist':
+            elif text[0] == '/get_watchlist' or text[0] == '/get_watchlist@Liga_Aktien_bot':
                 items = db.get_items(chat)
                 message = "\n".join(items)
                 send_message(message, chat)
-            elif text[0] == '/get_stock_price':
+            elif text[0] == '/get_stock_price' or text[0] == '/get_stock_price@Liga_Aktien_bot':
                 for Symbol in text[1:]:
                     Symbol = Symbol.replace(',','')
                     try:
