@@ -15,7 +15,6 @@ db = DBHelper()
 
 with open ('../Token/Token_Liga_bot.txt') as f:
     TOKEN = f.readlines()[0] 
-    print(TOKEN)
 URL = 'https://api.telegram.org/bot{}/'.format(TOKEN)
 
 def get_url(url):
@@ -127,20 +126,32 @@ def decide(updates):
             print(text[1:])
             chat = update["message"]["chat"]["id"]
             items = db.get_items(chat)
-            if text[0] == '/delete@Liga_Aktien_bot':
-                keyboard = build_keyboard(items)
-                send_message("Select an item to delete", chat, keyboard)
-            elif text[0] == '/add@Liga_Aktien_bot' and text[1:] in items:
-                print ('Already in List')
-                continue
-            elif text[0] == '/add@Liga_Aktien_bot' and text[1:] not in items:
-                split_text = text[1:].replace(',','')
-                for text in split_text:
-                    db.add_item(text, chat)
+            if text[0] == '/delete_watchlist':
+                if len(text[1:]) == 0:
+                    keyboard = build_keyboard(items)
+                    send_message("Select an item to delete", chat, keyboard)
+                else:
+                    for text in text[1:]:
+                        text=text.replace(',','')
+                        db.delete_item(text, chat)
+                        items = db.get_items(chat)
+                        message = "\n".join(items)
+                        send_message(message, chat)
+            elif text[0] == '/add_watchlist':
+                for text in text[1:]:
+                    text = text.replace(',','')
+                    if text in items:
+                        message= text + ' is already in List'
+                    else:
+                        db.add_item(text, chat)
+                        items = db.get_items(chat)
+                        message = "\n".join(items)
+                    send_message(message, chat)
+            elif text[0] == '/get_watchlist':
                 items = db.get_items(chat)
                 message = "\n".join(items)
                 send_message(message, chat)
-            elif text[0] == '/getActualPrice@Liga_Aktien_bot':
+            elif text[0] == '/get_stock_price':
                 for Symbol in text[1:]:
                     Symbol = Symbol.replace(',','')
                     try:
