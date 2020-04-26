@@ -53,32 +53,6 @@ def send_message(text, chat_id, reply_markup=None):
         url += "&reply_markup={}".format(reply_markup)
     get_url(url)
 
-# def handle_updates(updates):
-#     for update in updates["result"]:
-#         # try:
-#         text = update["message"]["text"]
-#         chat = update["message"]["chat"]["id"]
-#         items = db.get_items(chat)
-#         if text == "/delete":
-#             keyboard = build_keyboard(items)
-#             send_message("Select an item to delete", chat, keyboard)
-#         elif text == "/start":
-#             send_message("Welcome to the Watchlist. Send any text to me and I'll store it as an item. Send /delete to remove items", chat)
-#         elif text.startswith("/"):
-#             continue
-#         elif text in items:
-#             db.delete_item(text, chat)
-#             items = db.get_items(chat)
-#             keyboard = build_keyboard(items)
-#             send_message("Select an item to delete", chat, keyboard)
-#         else:
-#             db.add_item(text, chat)
-#             items = db.get_items(chat)
-#             message = "\n".join(items)
-#             send_message(message, chat)
-#         # except KeyError:
-#         #     pass
-
 def build_keyboard(items):
     keyboard = [[item] for item in items]
     reply_markup = {"keyboard":keyboard, "one_time_keyboard": True}
@@ -97,23 +71,7 @@ def getStock(Symbol):
     except KeyError:
         return 'Falsches Symbol oder kein aktueller Wert'
     except Exception as e:  
-        print(e)
         return e
-
-# def echo_all(updates):
-#     for update in updates["result"]:
-#         try:
-#             Chat_type = update["message"]["chat"]["type"]
-#             Symbol = update["message"]["text"]
-#             if Chat_type == 'group':
-#                 Symbol = Symbol.split(' ')[-1]
-#             else:
-#                 Symbol = Symbol
-#             chat = update["message"]["chat"]["id"]
-#             price = getStock(Symbol)
-#             send_message(price, chat)   
-#         except Exception as e:
-#             print(e)
 
 def decide(updates):
     try:
