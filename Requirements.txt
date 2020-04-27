@@ -1,8 +1,8 @@
-requests
-time
-datetime
-pandas_datareader
-yfinance 
-json 
-urllib
-sqlite3
+request>=2019.4.13,<2020.0.0
+DateTime>=4.3,<5.0
+pandas-datareader>=0.8.1,<1.0.0
+yfinance>=0.1.54,<1.0.0
+json5>=0.9.4,<1.0.0
+urllib3>=1.25.9,<2.0.0
+pysqlite3>=0.4.2,<1.0.0
+time>=1.0.0,<2.0.0

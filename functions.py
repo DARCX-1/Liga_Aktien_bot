@@ -10,7 +10,6 @@ import yfinance as yf
 import json
 import urllib
 
-
 class DBHelper:
 
     def __init__(self, dbname="Watchlist.sqlite"):
