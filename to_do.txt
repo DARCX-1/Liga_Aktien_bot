@@ -1,0 +1,4 @@
+schauen wie grocery bot es macht, dass man nach add list daten eingeben kann
+eingeben von mehrere spalten für Name,Symbol,Zielpreis
+überwachen von zielpreis und aktuellem preis
+ausgabe des Aktuellen Preises aller Symbole in der Watchlist
