@@ -123,9 +123,14 @@ class bot(DBHelper):
                 text = text.split(' ')
                 print(text)
                 items = DBHelper.get_items(self,chat)
+                if text[0] in items:
+                    print('test')
+                    text = list('/delete_watchlist ' + text[0])
+                print(text)
+                print(text[0])
                 print(items)
                 if text[0] == '/delete_watchlist' or text[0] == '/delete_watchlist@{}'.format(self.bot_name):
-                    if len(text[1:]) == 0:
+                    if len(text) == 1:
                         keyboard = self.build_keyboard(items)
                         print(keyboard)
                         self.send_message(
