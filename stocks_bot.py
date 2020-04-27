@@ -1,5 +1,5 @@
-#https://www.codementor.io/@garethdwyer/building-a-telegram-bot-using-python-part-1-goi5fncay
-#https://codeburst.io/indian-stock-market-price-notifier-bot-telegram-92e376b0c33a
+# https://www.codementor.io/@garethdwyer/building-a-telegram-bot-using-python-part-1-goi5fncay
+# https://codeburst.io/indian-stock-market-price-notifier-bot-telegram-92e376b0c33a
 
 
 from functions import DBHelper
@@ -7,10 +7,9 @@ from functions import bot
 import time
 
 db = DBHelper()
-bot_name='stocks_bot'
-token_directory='../Token/Token_Liga_bot.txt'
-bot = bot(token_directory,bot_name)
-
+bot_name = 'stocks_bot'
+token_directory = '../Token/Token_Liga_bot.txt'
+bot = bot(token_directory, bot_name)
 
 
 def main():
@@ -28,4 +27,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
