@@ -13,7 +13,7 @@ import urllib
 class DBHelper:
 
     def __init__(self, dbname="Watchlist.sqlite"):
-        self.dbname = dbname
+        dbname = dbname
         self.conn = sqlite3.connect(dbname)
 
     def setup(self):
@@ -47,26 +47,28 @@ class DBHelper:
 ####################################################################
 
 
-class bot():
-
+class bot(DBHelper):
+    # DBHelper=DBHelper()
     def __init__(self, directory, bot_name):
+        super(bot, self).__init__()
         with open('{}'.format(directory)) as f:
             token = f.readlines()[0]
         self.URL = 'https://api.telegram.org/bot{}/'.format(token)
-        self.db = DBHelper()
         self.bot_name = bot_name
+        # DBHelper()
+
 
     def get_url(self, url):
         try:
             response = requests.get(url)
             content = response.content.decode("utf8")
+            print('get_url',content)
             return content
         except:
             print('Irgendetwas ist gerade Down')
 
     def get_json_from_url(self, url):
         content = self.get_url(url)
-        print(content)
         js = json.loads(content)
         return js
 
@@ -120,18 +122,19 @@ class bot():
                 text = update["message"]["text"]
                 text = text.split(' ')
                 print(text)
-                items = self.db.get_items(chat)
+                items = DBHelper.get_items(self,chat)
                 print(items)
                 if text[0] == '/delete_watchlist' or text[0] == '/delete_watchlist@{}'.format(self.bot_name):
                     if len(text[1:]) == 0:
-                        keyboard = build_keyboard(items)
+                        keyboard = self.build_keyboard(items)
+                        print(keyboard)
                         self.send_message(
                             "Select an item to delete", chat, keyboard)
                     else:
                         for text in text[1:]:
                             text = text.replace(',', '')
-                            db.delete_item(text, chat)
-                            items = self.db.get_items(chat)
+                            DBHelper.delete_item(self,text, chat)
+                            items = DBHelper.get_items(self,chat)
                             message = "\n".join(items)
                             self.send_message(message, chat)
                 elif text[0] == '/add_watchlist'or text[0] == '/add_watchlist@{}'.format(self.bot_name):
@@ -140,22 +143,25 @@ class bot():
                         if text in items:
                             message = text + ' is already in List'
                         else:
-                            db.add_item(text, chat)
-                            items = self.db.get_items(chat)
+                            DBHelper.add_item(self,text, chat)
+                            items = DBHelper.get_items(self,chat)
                             message = "\n".join(items)
                         self.send_message(message, chat)
                 elif text[0] == '/get_watchlist' or text[0] == '/get_watchlist@{}'.format(self.bot_name):
-                    items = self.db.get_items(chat)
+                    items = DBHelper.get_items(self,chat)
                     message = "\n".join(items)
                     self.send_message(message, chat)
                 elif text[0] == '/get_stock_price' or text[0] == '/get_stock_price@{}'.format(self.bot_name):
-                    for symbol in text[1:]:
-                        symbol = symbol.replace(',', '')
-                        try:
+                    if len(text) == 1 or text[1].lower() == 'watchlist':
+                        items = DBHelper.get_items(self,chat)
+                        for i in items:
+                            price = self.get_stock(i.upper())
+                            self.send_message(price, chat)
+                    else:
+                        for symbol in text[1:]:
+                            symbol = symbol.replace(',', '').upper()    
                             price = self.get_stock(symbol)
                             self.send_message(price, chat)
-                        except Exception as e:
-                            print(e)
                 else:
                     continue
         except Exception as e:
