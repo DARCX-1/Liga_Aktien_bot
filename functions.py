@@ -46,11 +46,12 @@ class DBHelper:
 ####################################################################
 
 class bot():
-    def __init__(self,directory):
+    def __init__(self,directory,bot_name):
         with open ('{}'.format(directory)) as f:
             token = f.readlines()[0] 
         self.URL = 'https://api.telegram.org/bot{}/'.format(token)
         self.db=DBHelper()
+        self.bot_name=bot_name
     def get_url(self,url):
         try:
             response = requests.get(url)
@@ -82,7 +83,7 @@ class bot():
 
     def send_message(self,text, chat_id, reply_markup=None):
         text = urllib.parse.quote_plus(text)
-        url = URL + "sendMessage?text={}&chat_id={}&parse_mode=Markdown".format(text, chat_id)
+        url = self.URL + "sendMessage?text={}&chat_id={}&parse_mode=Markdown".format(text, chat_id)
         if reply_markup:
             url += "&reply_markup={}".format(reply_markup)
         self.get_url(url)
@@ -115,9 +116,9 @@ class bot():
                 text = update["message"]["text"]
                 text = text.split(' ')
                 print(text)
-                items = db.get_item(chat)
+                items = self.db.get_items(chat)
                 print(items)
-                if text[0] == '/delete_watchlist' or text[0] == '/delete_watchlist@{}'.format(bot_name):
+                if text[0] == '/delete_watchlist' or text[0] == '/delete_watchlist@{}'.format(self.bot_name):
                     if len(text[1:]) == 0:
                         keyboard = build_keyboard(items)
                         self.send_message("Select an item to delete", chat, keyboard)
@@ -125,24 +126,24 @@ class bot():
                         for text in text[1:]:
                             text=text.replace(',','')
                             db.delete_item(text, chat)
-                            items = db.get_items(chat)
+                            items = self.db.get_items(chat)
                             message = "\n".join(items)
                             self.send_message(message, chat)
-                elif text[0] == '/add_watchlist'or text[0] == '/add_watchlist@{}'.format(bot_name):
+                elif text[0] == '/add_watchlist'or text[0] == '/add_watchlist@{}'.format(self.bot_name):
                     for text in text[1:]:
                         text = text.replace(',','')
                         if text in items:
                             message= text + ' is already in List'
                         else:
                             db.add_item(text, chat)
-                            items = db.get_items(chat)
+                            items = self.db.get_items(chat)
                             message = "\n".join(items)
                         self.send_message(message, chat)
-                elif text[0] == '/get_watchlist' or text[0] == '/get_watchlist@{}'.format(bot_name):
-                    items = db.get_items(chat)
+                elif text[0] == '/get_watchlist' or text[0] == '/get_watchlist@{}'.format(self.bot_name):
+                    items = self.db.get_items(chat)
                     message = "\n".join(items)
                     self.send_message(message, chat)
-                elif text[0] == '/get_stock_price' or text[0] == '/get_stock_price@{}'.format(bot_name):
+                elif text[0] == '/get_stock_price' or text[0] == '/get_stock_price@{}'.format(self.bot_name):
                     for symbol in text[1:]:
                         symbol = symbol.replace(',','')
                         try:

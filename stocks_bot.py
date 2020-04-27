@@ -9,7 +9,7 @@ import time
 db = DBHelper()
 bot_name='stocks_bot'
 token_directory='../Token/Token_Liga_bot.txt'
-bot = bot(token_directory)
+bot = bot(token_directory,bot_name)
 
 
 
