@@ -1,31 +1,31 @@
 # https://www.codementor.io/@garethdwyer/building-a-telegram-bot-using-python-part-1-goi5fncay
 # https://codeburst.io/indian-stock-market-price-notifier-bot-telegram-92e376b0c33a
 
-
-from functions import DBHelper
-from functions import bot
+from calculations import Calculation
+from bot import Bot
 from watchlist import Watchlist
 import time
 import sys
 
-TOKEN = ''
+TOKEN = '../Token/Token_Liga_bot.txt'
 BOT_NAME = 'stocks_bot'
 WATCHLIST_FILE = 'watchlist.json'
 
 # db = DBHelper()
-# bot = bot(TOKEN, BOT_NAME)
+# bot = Bot(TOKEN, BOT_NAME)
+calc = Calculation()
 w = Watchlist(WATCHLIST_FILE)
 
 
 def main():
     # watchlist = w.watchlist_load(WATCHLIST_FILE)
-    test = w.add(5, 3)
+    test = w.add('LIN.DE', 3)
     print(test)
-    test1 = w.add(5, 6)
+    test1 = w.add('D7G.F', 6)
     print(test1)
-    test2 = w.add(6, 3)
+    test2 = w.add('test', 3)
     print(test2)
-    test3 = w.delete(5, 3)
+    test3 = w.delete('test', 3)
     print(test3)
     test4 = w.delete(4, 4)
     print(test4)
