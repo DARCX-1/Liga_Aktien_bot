@@ -6,7 +6,8 @@ calc = Calculation()
 KEY_SYMBOL = 'symbol'
 KEY_CHAT = 'chat'
 KEY_ID = 'id'
-KEY_PRICE = 'price'
+KEY_PRICE = 'last price'
+KEY_NEW_PRICE = 'actual price'
 
 # fragen, wie bekomme ich es hin, dass ich jetzt noch das stehen habe dass vorne die chat id steht und hinten die symbole?
 # wie speichere ich die Keys bei json.dump als int
@@ -30,13 +31,15 @@ class Watchlist:
             else:
                 temp_dict = {}
                 temp_dict[KEY_SYMBOL] = item
-                temp_dict[KEY_PRICE] = calc.get_stock(item)
+                temp_dict[KEY_NEW_PRICE] = calc.get_stock(item)
+                temp_dict[KEY_PRICE] = 'None'
                 self.data[chat].append(temp_dict)
         else:
             values = []
             temp_dict = {}
             temp_dict[KEY_SYMBOL] = item
-            temp_dict[KEY_PRICE] = calc.get_stock(item)
+            temp_dict[KEY_NEW_PRICE] = calc.get_stock(item)
+            temp_dict[KEY_PRICE] = 'None'
             values.append(temp_dict)
             self.data[chat] = values
         return self.data
@@ -49,12 +52,25 @@ class Watchlist:
                 pass
         return self.data
 
-    def load(self):
+    def load(self, chat):
         with open(self.file) as json_file:
             data = json.load(json_file, object_hook=lambda d: {int(
                 k) if k.lstrip('-').isdigit() else k: v for k, v in d.items()})
+            data = self.data[chat]
         return data
 
     def save(self, data):
         with open(self.file, 'w') as outfile:
             json.dump(data, outfile, ensure_ascii=True)
+
+    def ret(self, chat):
+        values = []
+        for v in self.load(chat):
+            temp_dict = {}
+            temp_dict[KEY_SYMBOL] = v[KEY_SYMBOL]
+            temp_dict[KEY_NEW_PRICE] = calc.get_stock(v[KEY_SYMBOL])
+            temp_dict[KEY_PRICE] = v[KEY_NEW_PRICE]
+            values.append(temp_dict)
+        self.data[chat] = values
+        self.save(self.data)
+        return self.data
