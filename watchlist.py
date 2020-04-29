@@ -1,7 +1,7 @@
 import json
-from calculations import Calculation
+from stockinformation import Stockinformation
 
-calc = Calculation()
+stock = Stockinformation()
 
 KEY_SYMBOL = 'symbol'
 KEY_CHAT = 'chat'
@@ -24,23 +24,22 @@ class Watchlist:
     def length(self):
         return len(self.data)
 
+    def temp_dict(self, item):
+        temp_dict = {}
+        temp_dict[KEY_SYMBOL] = item
+        temp_dict[KEY_NEW_PRICE] = stock.get_stock_price(item)
+        temp_dict[KEY_PRICE] = 'None'
+        return temp_dict
+
     def add(self, item, chat):
         if chat in self.data.keys():
             if item in [v[KEY_SYMBOL] for v in self.data[chat]]:
                 pass
             else:
-                temp_dict = {}
-                temp_dict[KEY_SYMBOL] = item
-                temp_dict[KEY_NEW_PRICE] = calc.get_stock(item)
-                temp_dict[KEY_PRICE] = 'None'
-                self.data[chat].append(temp_dict)
+                self.data[chat].append(self.temp_dict(item))
         else:
             values = []
-            temp_dict = {}
-            temp_dict[KEY_SYMBOL] = item
-            temp_dict[KEY_NEW_PRICE] = calc.get_stock(item)
-            temp_dict[KEY_PRICE] = 'None'
-            values.append(temp_dict)
+            values.append(self.temp_dict(item))
             self.data[chat] = values
         return self.data
 
@@ -66,11 +65,11 @@ class Watchlist:
     def ret(self, chat):
         values = []
         for v in self.load(chat):
-            temp_dict = {}
-            temp_dict[KEY_SYMBOL] = v[KEY_SYMBOL]
-            temp_dict[KEY_NEW_PRICE] = calc.get_stock(v[KEY_SYMBOL])
-            temp_dict[KEY_PRICE] = v[KEY_NEW_PRICE]
-            values.append(temp_dict)
+            ret_dict = {}
+            ret_dict[KEY_SYMBOL] = v[KEY_SYMBOL]
+            ret_dict[KEY_NEW_PRICE] = stock.get_stock_price(v[KEY_SYMBOL])
+            ret_dict[KEY_PRICE] = v[KEY_NEW_PRICE]
+            values.append(ret_dict)
         self.data[chat] = values
         self.save(self.data)
         return self.data

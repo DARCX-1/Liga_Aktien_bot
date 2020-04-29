@@ -12,14 +12,14 @@ import urllib
 ####################################################################
 
 
-class Calculation:
+class Stockinformation:
     # DBHelper=DBHelper()
 
     # def __init__(self):
     #     # self.symbol = symbol
     #     # DBHelper()
 
-    def get_stock(self, symbol):
+    def get_stock_price(self, symbol):
         # yf.pdr_override()
         try:
             stock = pdr.get_data_yahoo(symbol,  start="2020-04-20",
