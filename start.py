@@ -27,9 +27,10 @@ def main():
     print(test1)
     test1 = w.add('LIN.DE', 6)
     print(test1)
-    test1 = w.add('D7G.F', 6)
+    test1 = w.delete('D7G.F', 6)
     print(test1)
-
+    test1 = w.delete('test', 6)
+    print(test1)
     w.save(test1)
 
     test5 = w.load()

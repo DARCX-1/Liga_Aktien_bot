@@ -25,8 +25,6 @@ class Watchlist:
 
     def add(self, item, chat):
         if chat in self.data.keys():
-            print([v[KEY_SYMBOL] for v in self.data[chat]])
-            print(item)
             if item in [v[KEY_SYMBOL] for v in self.data[chat]]:
                 pass
             else:
@@ -44,12 +42,11 @@ class Watchlist:
         return self.data
 
     def delete(self, item, chat):
-        try:
-            for v in self.data[chat]:
-                if v[KEY_SYMBOL] == item:
-                    self.data[chat].remove(v)
-        except Exception as e:
-            print(e)
+        for v in self.data[chat]:
+            if v[KEY_SYMBOL] == item:
+                self.data[chat].remove(v)
+            else:
+                pass
         return self.data
 
     def load(self):
