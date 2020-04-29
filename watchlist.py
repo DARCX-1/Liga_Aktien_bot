@@ -25,10 +25,15 @@ class Watchlist:
 
     def add(self, item, chat):
         if chat in self.data.keys():
-            temp_dict = {}
-            temp_dict[KEY_SYMBOL] = item
-            temp_dict[KEY_PRICE] = calc.get_stock(item)
-            self.data[chat].append(temp_dict)
+            print([v[KEY_SYMBOL] for v in self.data[chat]])
+            print(item)
+            if item in [v[KEY_SYMBOL] for v in self.data[chat]]:
+                pass
+            else:
+                temp_dict = {}
+                temp_dict[KEY_SYMBOL] = item
+                temp_dict[KEY_PRICE] = calc.get_stock(item)
+                self.data[chat].append(temp_dict)
         else:
             values = []
             temp_dict = {}
