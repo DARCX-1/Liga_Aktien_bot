@@ -1,4 +1,3 @@
-# for Bot
 import requests
 import time
 import datetime
@@ -7,30 +6,25 @@ import yfinance as yf
 import json
 import urllib
 from watchlist import Watchlist
-
-
-####################################################################
-# BOT Class
-####################################################################
+from stockinformation import Stockinformation
 
 
 class Bot():
-    # DBHelper=DBHelper()
 
     def __init__(self, directory, bot_name, watchlist_file):
-        super(bot, self).__init__()
+        super(Bot, self).__init__()
         with open('{}'.format(directory)) as f:
             token = f.readlines()[0]
         self.URL = 'https://api.telegram.org/bot{}/'.format(token)
         self.bot_name = bot_name
         self.w = Watchlist(watchlist_file)
-        # DBHelper()
+        self.list = self.w.load()
+        self.stock = Stockinformation()
 
     def get_url(self, url):
         try:
             response = requests.get(url)
             content = response.content.decode("utf8")
-            print('get_url', content)
             return content
         except:
             print('Irgendetwas ist gerade Down')
@@ -38,6 +32,7 @@ class Bot():
     def get_json_from_url(self, url):
         content = self.get_url(url)
         js = json.loads(content)
+        print('jason', js)
         return js
 
     def get_updates(self, offset=None):
@@ -55,6 +50,7 @@ class Bot():
 
     def send_message(self, text, chat_id, reply_markup=None):
         text = urllib.parse.quote_plus(text)
+        chat_id = int(chat_id)
         url = self.URL + \
             "sendMessage?text={}&chat_id={}&parse_mode=Markdown".format(
                 text, chat_id)
@@ -67,74 +63,48 @@ class Bot():
         reply_markup = {"keyboard": keyboard, "one_time_keyboard": True}
         return json.dumps(reply_markup)
 
-    def get_stock(self, symbol):
-        # yf.pdr_override()
-        try:
-            stock = pdr.get_data_yahoo(symbol,  start="2020-04-20",
-                                       end=datetime.date.today())
-            price = (stock["Close"][0]).round(3)
-            price = str(price)
-            price = "Current price for " + symbol + " is " + price
-            price = str(price.encode('utf-8', 'ignore'), errors='ignore')
-            return price
-        except KeyError:
-            return 'wrong symbol or no actual price'
-        except Exception as e:
-            return e
-
     def decide(self, updates):
         try:
             for update in updates["result"]:
-                Chat_type = update["message"]["chat"]["type"]
-                chat = update["message"]["chat"]["id"]
-                print(chat)
+                chat = str(update["message"]["chat"]["id"])
                 text = update["message"]["text"]
+                print('decide1', text)
                 text = text.split(' ')
-                print(text)
-                items = DBHelper.get_items(self, chat)
-                if text[0] in items:
-                    print('test')
-                    text = list('/delete_watchlist ' + text[0])
-                print(text)
-                print(text[0])
-                print(items)
-                if text[0] == '/delete_watchlist' or text[0] == '/delete_watchlist@{}'.format(self.bot_name):
+                # items = self.list[chat]
+                # print(self.list)
+
+                if text[0] == '/rmwl' or text[0] == '/rmwl@{}'.format(self.bot_name):
                     if len(text) == 1:
-                        keyboard = self.build_keyboard(items)
+                        keyboard = self.build_keyboard(self.w.ret(chat))
                         print(keyboard)
                         self.send_message(
                             "Select an item to delete", chat, keyboard)
                     else:
                         for text in text[1:]:
+                            print(text)
                             text = text.replace(',', '')
-                            DBHelper.delete_item(self, text, chat)
-                            items = DBHelper.get_items(self, chat)
-                            message = "\n".join(items)
+                            self.w.delete(text, chat)
+                            message = text + ' was successful deleted'
                             self.send_message(message, chat)
-                elif text[0] == '/add_watchlist'or text[0] == '/add_watchlist@{}'.format(self.bot_name):
+                elif text[0] == '/addwl'or text[0] == '/addwl@{}'.format(self.bot_name):
                     for text in text[1:]:
                         text = text.replace(',', '')
-                        if text in items:
-                            message = text + ' is already in List'
-                        else:
-                            DBHelper.add_item(self, text, chat)
-                            items = DBHelper.get_items(self, chat)
-                            message = "\n".join(items)
+                        self.w.add(text, chat)
+                        message = text + ' was successful added'
                         self.send_message(message, chat)
-                elif text[0] == '/get_watchlist' or text[0] == '/get_watchlist@{}'.format(self.bot_name):
-                    items = DBHelper.get_items(self, chat)
-                    message = "\n".join(items)
+                elif text[0] == '/getwl' or text[0] == '/getwl@{}'.format(self.bot_name):
+                    items = self.w.ret(chat)
+                    message = json.dumps(items, indent=4)
                     self.send_message(message, chat)
-                elif text[0] == '/get_stock_price' or text[0] == '/get_stock_price@{}'.format(self.bot_name):
-                    if len(text) == 1 or text[1].lower() == 'watchlist':
-                        items = DBHelper.get_items(self, chat)
-                        for i in items:
-                            price = self.get_stock(i.upper())
-                            self.send_message(price, chat)
+                elif text[0] == '/sp' or text[0] == '/sp@{}'.format(self.bot_name):
+                    if len(text) == 1:
+                        message = 'Please add the Stocks'
+                        self.send_message(message, chat)
                     else:
                         for symbol in text[1:]:
                             symbol = symbol.replace(',', '').upper()
-                            price = self.get_stock(symbol)
+                            price = self.stock.get_stock_price(symbol)
+                            message = 'The Price for', symbol, 'is', price
                             self.send_message(price, chat)
                 else:
                     continue

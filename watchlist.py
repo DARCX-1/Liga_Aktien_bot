@@ -4,20 +4,8 @@ from stockinformation import Stockinformation
 stock = Stockinformation()
 
 KEY_SYMBOL = 'symbol'
-KEY_CHAT = 'chat'
-KEY_ID = 'id'
 KEY_PRICE = 'last price'
 KEY_NEW_PRICE = 'actual price'
-
-# wie bekomme ich jetzt den bot mit der def get stock price von functions  hier rein? über import, oder geht das besser, weil wir den im Mainskript aufrufen?
-#    also könnte man die bot klasse in der init noch mit übergeben?
-
-# wann returne ich self.data und wann data? (vgl. def load und rest)-->
-# könnte ich theoretisch auch direkt retunr self.data[chat] returnen oder
-# überschreibe ich damit irgendwas?
-
-# warum speichert er bei add direkt in das json file ohne das ich save
-# machen muss?
 
 
 class Watchlist:
@@ -39,7 +27,7 @@ class Watchlist:
     def add(self, item, chat):
         if chat in self.data.keys():
             if item in [v[KEY_SYMBOL] for v in self.data[chat]]:
-                pass
+                return ['Already in List']
             else:
                 self.data[chat].append(self.temp_dict(item))
         else:
@@ -55,12 +43,12 @@ class Watchlist:
                 self.data[chat].remove(v)
             else:
                 pass
-        return self.data
+        self.save()
+        return self.data[chat]
 
     def load(self):
-        print(self.file)
         with open(self.file) as json_file:
-            data = json.load(json_file)
+            self.data = json.load(json_file)
         return self.data
 
     def save(self):
@@ -78,4 +66,4 @@ class Watchlist:
             values.append(ret_dict)
         self.data[chat] = values
         self.save()
-        return self.data
+        return self.data[chat]
