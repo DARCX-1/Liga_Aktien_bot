@@ -7,6 +7,8 @@ import yfinance as yf
 import json
 import urllib
 
+from watchlist import Watchlist
+
 
 ####################################################################
 # BOT Class
@@ -16,12 +18,13 @@ import urllib
 class Bot():
     # DBHelper=DBHelper()
 
-    def __init__(self, directory, bot_name):
+    def __init__(self, watchlist_file directory, bot_name):
         super(bot, self).__init__()
         with open('{}'.format(directory)) as f:
             token = f.readlines()[0]
         self.URL = 'https://api.telegram.org/bot{}/'.format(token)
         self.bot_name = bot_name
+        self.watchlist = Watchlist(watchlist_file)
         # DBHelper()
 
     def get_url(self, url):

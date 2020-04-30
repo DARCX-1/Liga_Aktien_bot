@@ -46,6 +46,7 @@ class Watchlist:
             values = []
             values.append(self.temp_dict(item))
             self.data[chat] = values
+        self.save()
         return self.data
 
     def delete(self, item, chat):
@@ -56,16 +57,14 @@ class Watchlist:
                 pass
         return self.data
 
-    def load(self, chat):
+    def load(self):
         with open(self.file) as json_file:
-            data = json.load(json_file, object_hook=lambda d: {int(
-                k) if k.lstrip('-').isdigit() else k: v for k, v in d.items()})
-            data = self.data[chat]
-        return data
+            self.data = json.load(json_file)
+        return self.data
 
-    def save(self, data):
+    def save(self):
         with open(self.file, 'w') as outfile:
-            json.dump(data, outfile, ensure_ascii=True)
+            json.dump(self.data, outfile, ensure_ascii=True)
 
     def ret(self, chat):
         values = []
@@ -76,5 +75,5 @@ class Watchlist:
             ret_dict[KEY_PRICE] = v[KEY_NEW_PRICE]
             values.append(ret_dict)
         self.data[chat] = values
-        self.save(self.data)
+        self.save()
         return self.data
