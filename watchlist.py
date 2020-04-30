@@ -9,10 +9,15 @@ KEY_ID = 'id'
 KEY_PRICE = 'last price'
 KEY_NEW_PRICE = 'actual price'
 
-# fragen, wie bekomme ich es hin, dass ich jetzt noch das stehen habe dass vorne die chat id steht und hinten die symbole?
-# wie speichere ich die Keys bei json.dump als int
 # wie bekomme ich jetzt den bot mit der def get stock price von functions  hier rein? über import, oder geht das besser, weil wir den im Mainskript aufrufen?
-# also könnte man die bot klasse in der init noch mit übergeben?
+#    also könnte man die bot klasse in der init noch mit übergeben?
+
+# wann returne ich self.data und wann data? (vgl. def load und rest)-->
+# könnte ich theoretisch auch direkt retunr self.data[chat] returnen oder
+# überschreibe ich damit irgendwas?
+
+# warum speichert er bei add direkt in das json file ohne das ich save
+# machen muss?
 
 
 class Watchlist:
