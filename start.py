@@ -17,12 +17,14 @@ def main():
     # bot.init_watchlist(watchlist)
     last_update_id = None
     while True:
+        bot.check_target()
         print("getting updates")
         updates = bot.get_updates(last_update_id)
         # insert watchlist here
         if len(updates["result"]) > 0:
             last_update_id = bot.get_last_update_id(updates) + 1
             bot.decide(updates)
+
         time.sleep(0.5)
 
 

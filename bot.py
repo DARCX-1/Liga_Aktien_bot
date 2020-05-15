@@ -64,7 +64,6 @@ class Bot():
                 chat = str(update["message"]["chat"]["id"])
                 text = update["message"]["text"]
                 text = text.split(' ')
-                print(text)
                 if text[0] == '/rmwl' or text[0] == '/rmwl@{}'.format(self.bot_name):
                     for text in text[1:]:
                         text = text.replace(',', '')
@@ -75,17 +74,24 @@ class Bot():
                     for text in text[1:]:
                         text = text.replace(',', '')
                         if len(text.split(':')) == 2:
-                            text, target = text.split(':')
+                            text, target_buy = text.split(':')
+                            target_sell = 'no price given'
+                        elif len(text.split(':')) == 3:
+                            text, target_buy, target_sell = text.split(':')
+                            if target_buy == '':
+                                target_buy = 'no price given'
                         else:
-                            target = 'no target price given'
-                        return_text = self.w.add(text, target, chat)
+                            target_buy = 'no price given'
+                            target_sell = 'no price given'
+                        return_text = self.w.add(
+                            text, target_buy, target_sell, chat)
                         message = text + return_text[0]
                         self.send_message(message, chat)
                 elif text[0] == '/getwl' or text[0] == '/getwl@{}'.format(self.bot_name):
                     items = self.w.ret(chat)
                     message = json.dumps(items, indent=4)
                     message = message.replace(
-                        '},', '-------------------------------------').replace('{', 'Information').replace('}', '')
+                        '},', '-------------------------------------').replace('{', 'Information').replace('}', '').replace('"', '')
                     self.send_message(message, chat)
                 elif text[0] == '/sp' or text[0] == '/sp@{}'.format(self.bot_name):
                     if len(text) == 1:
@@ -100,4 +106,11 @@ class Bot():
                 else:
                     continue
         except Exception as e:
-            print(e)
+            print('Exception', e)
+
+    def check_target(self):
+        for chat in self.list:
+            text = self.w.compare(chat)
+            for message in text:
+                print(message)
+                self.send_message(message, chat)
