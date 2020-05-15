@@ -58,11 +58,6 @@ class Bot():
             url += "&reply_markup={}".format(reply_markup)
         self.get_url(url)
 
-    def build_keyboard(self, items):
-        keyboard = [[item] for item in items]
-        reply_markup = {"keyboard": keyboard, "one_time_keyboard": True}
-        return json.dumps(reply_markup)
-
     def decide(self, updates):
         try:
             for update in updates["result"]:
@@ -74,18 +69,12 @@ class Bot():
                 # print(self.list)
 
                 if text[0] == '/rmwl' or text[0] == '/rmwl@{}'.format(self.bot_name):
-                    if len(text) == 1:
-                        keyboard = self.build_keyboard(self.w.ret(chat))
-                        print(keyboard)
-                        self.send_message(
-                            "Select an item to delete", chat, keyboard)
-                    else:
-                        for text in text[1:]:
-                            print(text)
-                            text = text.replace(',', '')
-                            self.w.delete(text, chat)
-                            message = text + ' was successful deleted'
-                            self.send_message(message, chat)
+                    for text in text[1:]:
+                        print(text)
+                        text = text.replace(',', '')
+                        self.w.delete(text, chat)
+                        message = text + ' was successful deleted'
+                        self.send_message(message, chat)
                 elif text[0] == '/addwl'or text[0] == '/addwl@{}'.format(self.bot_name):
                     for text in text[1:]:
                         text = text.replace(',', '')

@@ -6,6 +6,7 @@ stock = Stockinformation()
 KEY_SYMBOL = 'symbol'
 KEY_PRICE = 'last price'
 KEY_NEW_PRICE = 'actual price'
+KEY_TARGET = 'target price'
 
 
 class Watchlist:
