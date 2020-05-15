@@ -63,14 +63,10 @@ class Bot():
             for update in updates["result"]:
                 chat = str(update["message"]["chat"]["id"])
                 text = update["message"]["text"]
-                print('decide1', text)
                 text = text.split(' ')
-                # items = self.list[chat]
-                # print(self.list)
-
+                print(text)
                 if text[0] == '/rmwl' or text[0] == '/rmwl@{}'.format(self.bot_name):
                     for text in text[1:]:
-                        print(text)
                         text = text.replace(',', '')
                         self.w.delete(text, chat)
                         message = text + ' was successful deleted'
@@ -78,12 +74,18 @@ class Bot():
                 elif text[0] == '/addwl'or text[0] == '/addwl@{}'.format(self.bot_name):
                     for text in text[1:]:
                         text = text.replace(',', '')
-                        self.w.add(text, chat)
-                        message = text + ' was successful added'
+                        if len(text.split(':')) == 2:
+                            text, target = text.split(':')
+                        else:
+                            target = 'no target price given'
+                        return_text = self.w.add(text, target, chat)
+                        message = text + return_text[0]
                         self.send_message(message, chat)
                 elif text[0] == '/getwl' or text[0] == '/getwl@{}'.format(self.bot_name):
                     items = self.w.ret(chat)
                     message = json.dumps(items, indent=4)
+                    message = message.replace(
+                        '},', '-------------------------------------').replace('{', 'Information').replace('}', '')
                     self.send_message(message, chat)
                 elif text[0] == '/sp' or text[0] == '/sp@{}'.format(self.bot_name):
                     if len(text) == 1:

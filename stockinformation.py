@@ -14,7 +14,6 @@ class Stockinformation:
         try:
             stock = pdr.get_data_yahoo(symbol,  start=datetime.today() - timedelta(days=days_to_subtract),
                                        end=datetime.today())
-            print(stock)
             price = (stock["Close"][-1]).round(3)
             price = str(price)
             return price

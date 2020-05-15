@@ -18,22 +18,36 @@ class Watchlist:
     def length(self):
         return len(self.data)
 
-    def temp_dict(self, item):
+    def temp_dict(self, item, target):
         temp_dict = {}
         temp_dict[KEY_SYMBOL] = item
         temp_dict[KEY_NEW_PRICE] = stock.get_stock_price(item)
         temp_dict[KEY_PRICE] = 'None'
+        temp_dict[KEY_TARGET] = target
         return temp_dict
 
-    def add(self, item, chat):
+    def add(self, item, target, chat):
+
         if chat in self.data.keys():
             if item in [v[KEY_SYMBOL] for v in self.data[chat]]:
-                return ['Already in List']
+                for v in self.data[chat]:
+                    if item in v[KEY_SYMBOL] and target == v[KEY_TARGET]:
+                        return [' already in list']
+                    elif item in v[KEY_SYMBOL] and target != v[KEY_TARGET]:
+                        self.delete(item, chat)
+                        self.data[chat].append(self.temp_dict(item, target))
+                        self.save()
+                        return [' target price updated']
+                    else:
+                        continue
             else:
-                self.data[chat].append(self.temp_dict(item))
+                self.data[chat].append(self.temp_dict(item, target))
+                self.save()
+                print(self.data)
+                return [' was successful added']
         else:
             values = []
-            values.append(self.temp_dict(item))
+            values.append(self.temp_dict(item, target))
             self.data[chat] = values
         self.save()
         return self.data
@@ -64,6 +78,7 @@ class Watchlist:
             ret_dict[KEY_SYMBOL] = v[KEY_SYMBOL]
             ret_dict[KEY_NEW_PRICE] = stock.get_stock_price(v[KEY_SYMBOL])
             ret_dict[KEY_PRICE] = v[KEY_NEW_PRICE]
+            ret_dict[KEY_TARGET] = v[KEY_TARGET]
             values.append(ret_dict)
         self.data[chat] = values
         self.save()
