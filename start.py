@@ -12,6 +12,11 @@ WATCHLIST_FILE = 'watchlist.json'
 
 bot = Bot(TOKEN, BOT_NAME, WATCHLIST_FILE)
 
+if len(sys.argv) > 1:
+    if sys.argv[1] == 'init':
+        bot.upgrade_watchlist()
+        sys.exit(0)
+
 
 def main():
     # bot.init_watchlist(watchlist)

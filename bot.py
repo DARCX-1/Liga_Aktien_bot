@@ -18,8 +18,11 @@ class Bot():
         self.URL = 'https://api.telegram.org/bot{}/'.format(token)
         self.bot_name = bot_name
         self.w = Watchlist(watchlist_file)
-        self.list = self.w.load()
         self.stock = Stockinformation()
+
+    def upgrade_watchlist(self):
+        upgraded = self.w.upgrade()
+        print('Elements upgraded:', upgraded)
 
     def get_url(self, url):
         try:
@@ -109,8 +112,7 @@ class Bot():
             print('Exception', e)
 
     def check_target(self):
-        for chat in self.list:
+        for chat in self.w.load():
             text = self.w.compare(chat)
             for message in text:
-                print(message)
                 self.send_message(message, chat)
